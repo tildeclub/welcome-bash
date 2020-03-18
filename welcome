@@ -1,0 +1,45 @@
+#!/bin/sh
+
+dialog="dialog --ascii-lines --clear --backtitle tilde.club"
+
+$dialog --title "welcome to tilde.club!" \
+    --msgbox "we're glad you're here! let's get you set up:" 8 30 \
+
+$dialog --title "change your password" \
+    --msgbox "check your welcome email for the temporary password. \n\
+enter it, then your new password twice for confirmation" 10 30
+
+clear
+passwd
+
+shellchoice=$(mktemp)
+
+$dialog --title "change your shell" --no-cancel \
+    --menu "choose from the following shells. pick bash if you aren't \n\
+familiar with any of the others." 16 60 7 \
+    "/bin/bash" "bash" \
+    "/bin/sh" "sh" \
+    "/bin/dash" "dash" \
+    "/bin/zsh" "zsh" \
+    "/usr/bin/xonsh" "xonsh (python shell, nonstandard)" \
+    "/usr/bin/fish" "fish" 2> $shellchoice
+
+case $? in
+    0)
+        shell=$(cat $shellchoice);;
+    *)
+        shell=/bin/bash;;
+esac
+
+clear
+chsh -s $shell
+
+$dialog --title "you're all set!" \
+    --msgbox "welcome to the ~club! \n\
+the best place to find us and get help is irc or the mailing list. \n\
+there's also lots of information on our wiki: https://tilde.club/wiki/\n\
+
+
+our default configuration drops you into byobu, a terminal multiplexer, \n\
+with irc and mutt (email client) pre-opened.\n\
+see 'man byobu' or press shift-f1 to see the default keybinds." 15 50
